@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,13 +5,14 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Search, UserPlus, Clock, Users, TrendingUp, UserCog } from 'lucide-react';
+import { Search, UserPlus, Clock, Users, TrendingUp, UserCog, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import VisitorForm from '@/components/VisitorForm';
 import VisitorTable from '@/components/VisitorTable';
 import CheckInOut from '@/components/CheckInOut';
 import AdminDashboard from '@/components/AdminDashboard';
 import HostManagement from '@/components/HostManagement';
+import Reports from '@/components/Reports';
 import { VisitorService } from '@/services/VisitorService';
 import { Visitor, Visit, Host } from '@/types/vms';
 
@@ -20,7 +20,7 @@ const Index = () => {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [visits, setVisits] = useState<Visit[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
-  const [activeTab, setActiveTab] = useState<'register' | 'checkin' | 'visitors' | 'admin' | 'hosts'>('register');
+  const [activeTab, setActiveTab] = useState<'register' | 'checkin' | 'visitors' | 'hosts' | 'reports' | 'admin'>('register');
 
   useEffect(() => {
     // Load initial data
@@ -165,6 +165,14 @@ const Index = () => {
             Host Management
           </Button>
           <Button
+            variant={activeTab === 'reports' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('reports')}
+            className="flex items-center gap-2"
+          >
+            <FileText className="h-4 w-4" />
+            Reports
+          </Button>
+          <Button
             variant={activeTab === 'admin' ? 'default' : 'outline'}
             onClick={() => setActiveTab('admin')}
             className="flex items-center gap-2"
@@ -221,6 +229,16 @@ const Index = () => {
                 onHostCreated={handleHostCreated}
                 onHostUpdated={handleHostUpdated}
                 onHostDeleted={handleHostDeleted}
+              />
+            </div>
+          )}
+          
+          {activeTab === 'reports' && (
+            <div className="lg:col-span-3">
+              <Reports 
+                visitors={visitors} 
+                visits={visits} 
+                hosts={hosts} 
               />
             </div>
           )}
