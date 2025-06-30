@@ -1,4 +1,3 @@
-
 import { Visitor, Host, Visit, VisitPurpose } from '@/types/vms';
 
 class VisitorServiceClass {
@@ -143,6 +142,28 @@ class VisitorServiceClass {
     };
     this.hosts.push(newHost);
     return newHost;
+  }
+
+  updateHost(hostId: number, updates: Partial<Omit<Host, 'HostID'>>): Host | null {
+    const hostIndex = this.hosts.findIndex(h => h.HostID === hostId);
+    if (hostIndex === -1) return null;
+
+    this.hosts[hostIndex] = { ...this.hosts[hostIndex], ...updates };
+    return this.hosts[hostIndex];
+  }
+
+  deleteHost(hostId: number): boolean {
+    const hostIndex = this.hosts.findIndex(h => h.HostID === hostId);
+    if (hostIndex === -1) return false;
+
+    // Check if host has any active visits
+    const activeVisits = this.visits.filter(v => v.HostID === hostId && v.Status === 'Checked In');
+    if (activeVisits.length > 0) {
+      throw new Error('Cannot delete host with active visits');
+    }
+
+    this.hosts.splice(hostIndex, 1);
+    return true;
   }
 
   // Visit methods

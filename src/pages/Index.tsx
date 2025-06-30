@@ -6,12 +6,13 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Search, UserPlus, Clock, Users, TrendingUp } from 'lucide-react';
+import { Search, UserPlus, Clock, Users, TrendingUp, UserCog } from 'lucide-react';
 import { toast } from 'sonner';
 import VisitorForm from '@/components/VisitorForm';
 import VisitorTable from '@/components/VisitorTable';
 import CheckInOut from '@/components/CheckInOut';
 import AdminDashboard from '@/components/AdminDashboard';
+import HostManagement from '@/components/HostManagement';
 import { VisitorService } from '@/services/VisitorService';
 import { Visitor, Visit, Host } from '@/types/vms';
 
@@ -19,7 +20,7 @@ const Index = () => {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [visits, setVisits] = useState<Visit[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
-  const [activeTab, setActiveTab] = useState<'register' | 'checkin' | 'visitors' | 'admin'>('register');
+  const [activeTab, setActiveTab] = useState<'register' | 'checkin' | 'visitors' | 'admin' | 'hosts'>('register');
 
   useEffect(() => {
     // Load initial data
@@ -36,6 +37,21 @@ const Index = () => {
   const handleVisitCreated = (visit: Visit) => {
     setVisits(prev => [...prev, visit]);
     toast.success("Visit recorded successfully!");
+  };
+
+  const handleHostCreated = (host: Host) => {
+    setHosts(prev => [...prev, host]);
+    toast.success("Host added successfully!");
+  };
+
+  const handleHostUpdated = (updatedHost: Host) => {
+    setHosts(prev => prev.map(h => h.HostID === updatedHost.HostID ? updatedHost : h));
+    toast.success("Host updated successfully!");
+  };
+
+  const handleHostDeleted = (hostId: number) => {
+    setHosts(prev => prev.filter(h => h.HostID !== hostId));
+    toast.success("Host deleted successfully!");
   };
 
   const getTodaysStats = () => {
@@ -141,6 +157,14 @@ const Index = () => {
             All Visitors
           </Button>
           <Button
+            variant={activeTab === 'hosts' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('hosts')}
+            className="flex items-center gap-2"
+          >
+            <UserCog className="h-4 w-4" />
+            Host Management
+          </Button>
+          <Button
             variant={activeTab === 'admin' ? 'default' : 'outline'}
             onClick={() => setActiveTab('admin')}
             className="flex items-center gap-2"
@@ -187,6 +211,17 @@ const Index = () => {
           {activeTab === 'visitors' && (
             <div className="lg:col-span-3">
               <VisitorTable visitors={visitors} visits={visits} hosts={hosts} />
+            </div>
+          )}
+          
+          {activeTab === 'hosts' && (
+            <div className="lg:col-span-3">
+              <HostManagement 
+                hosts={hosts}
+                onHostCreated={handleHostCreated}
+                onHostUpdated={handleHostUpdated}
+                onHostDeleted={handleHostDeleted}
+              />
             </div>
           )}
           
