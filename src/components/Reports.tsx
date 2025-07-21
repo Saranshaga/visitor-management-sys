@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -101,94 +100,117 @@ const Reports: React.FC<ReportsProps> = ({ visitors, visits, hosts }) => {
     return duration.replace('h', '.').replace('m', '').replace(' ', '');
   };
 
-  const exportReport = (type: 'daily' | 'history') => {
+  const exportDailyReport = () => {
     try {
-      const data = type === 'daily' ? dailyReportData : historyReportData;
-      
-      if (data.length === 0) {
-        toast.error('No data available to export');
+      if (dailyReportData.length === 0) {
+        toast.error('No data available for the selected date');
         return;
       }
 
-      const reportTitle = type === 'daily' 
-        ? `Daily Visitor Log - ${new Date(selectedDate).toLocaleDateString()}`
-        : `Visitor History Report - ${getHistoryReportFilter()}`;
+      const reportDate = new Date(selectedDate).toLocaleDateString();
+      const reportTitle = `Daily Visitor Log - ${reportDate}`;
       
-      // Generate CSV content with BOM for proper Excel handling
-      let csvContent = '\uFEFF'; // BOM for UTF-8
+      // Generate CSV content with UTF-8 BOM for Excel compatibility
+      let csvContent = '\uFEFF'; // UTF-8 BOM
       
-      if (type === 'daily') {
-        csvContent += 'Visitor Name,Company,Host Name,Purpose,Check-in Time,Check-out Time,Duration (Hrs),Status\n';
-        data.forEach(visit => {
-          const row = [
-            VisitorService.getVisitorFullName(visit.visitor),
-            visit.visitor.Company || 'N/A',
-            VisitorService.getHostFullName(visit.host),
-            visit.Purpose,
-            formatDateTime(visit.CheckInTime),
-            visit.CheckOutTime ? formatDateTime(visit.CheckOutTime) : 'N/A',
-            formatDuration(visit.duration || 'N/A'),
-            visit.Status
-          ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(',');
-          csvContent += row + '\n';
-        });
-      } else {
-        csvContent += 'Visit ID,Visitor Name,Company,Host Name,Purpose,Check-in Time,Check-out Time,Status\n';
-        data.forEach(visit => {
-          const row = [
-            visit.VisitID,
-            VisitorService.getVisitorFullName(visit.visitor),
-            visit.visitor.Company || 'N/A',
-            VisitorService.getHostFullName(visit.host),
-            visit.Purpose,
-            formatDateTime(visit.CheckInTime),
-            visit.CheckOutTime ? formatDateTime(visit.CheckOutTime) : 'N/A',
-            visit.Status
-          ].map(field => `"${String(field).replace(/"/g, '""')}"`).join(',');
-          csvContent += row + '\n';
-        });
-      }
+      // Add header
+      csvContent += 'Visitor Name,Company,Host Name,Purpose,Check-in Time,Check-out Time,Duration (Hrs),Status\n';
       
-      // Create blob and download
-      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      // Add data rows
+      dailyReportData.forEach(visit => {
+        const row = [
+          `"${VisitorService.getVisitorFullName(visit.visitor)}"`,
+          `"${visit.visitor.Company || 'N/A'}"`,
+          `"${VisitorService.getHostFullName(visit.host)}"`,
+          `"${visit.Purpose}"`,
+          `"${formatDateTime(visit.CheckInTime)}"`,
+          `"${visit.CheckOutTime ? formatDateTime(visit.CheckOutTime) : 'N/A'}"`,
+          `"${formatDuration(visit.duration || 'N/A')}"`,
+          `"${visit.Status}"`
+        ];
+        csvContent += row.join(',') + '\n';
+      });
       
-      // Generate filename with timestamp
-      const timestamp = new Date().toISOString().split('T')[0];
-      const filename = type === 'daily' 
-        ? `Daily_Visitor_Report_${selectedDate}.csv`
-        : `Visitor_History_Report_${timestamp}.csv`;
+      // Create and trigger download
+      const blob = new Blob([csvContent], { 
+        type: 'text/csv;charset=utf-8;' 
+      });
       
-      // Create download link and trigger download
-      const url = URL.createObjectURL(blob);
+      const filename = `Daily_Visitor_Report_${selectedDate}.csv`;
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
-      link.download = filename;
-      link.style.display = 'none';
       
-      // Force download by setting attributes and clicking
-      link.setAttribute('target', '_blank');
-      link.setAttribute('rel', 'noopener noreferrer');
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
       
-      // Append to body, click, and remove
       document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
       
-      // Use setTimeout to ensure the link is in the DOM before clicking
-      setTimeout(() => {
-        link.click();
-        
-        // Clean up after a short delay
-        setTimeout(() => {
-          if (document.body.contains(link)) {
-            document.body.removeChild(link);
-          }
-          URL.revokeObjectURL(url);
-        }, 100);
-      }, 10);
+      window.URL.revokeObjectURL(url);
       
-      toast.success(`${reportTitle} downloaded successfully! Check your Downloads folder.`);
+      toast.success(`Daily report for ${reportDate} downloaded successfully!`);
     } catch (error) {
       console.error('Export error:', error);
-      toast.error('Failed to export report. Please try again.');
+      toast.error('Failed to export daily report. Please try again.');
+    }
+  };
+
+  const exportHistoryReport = () => {
+    try {
+      if (historyReportData.length === 0) {
+        toast.error('No data available for the selected criteria');
+        return;
+      }
+
+      const reportTitle = `Visitor History Report - ${getHistoryReportFilter()}`;
+      
+      // Generate CSV content with UTF-8 BOM for Excel compatibility
+      let csvContent = '\uFEFF'; // UTF-8 BOM
+      
+      // Add header
+      csvContent += 'Visit ID,Visitor Name,Company,Host Name,Purpose,Check-in Time,Check-out Time,Status\n';
+      
+      // Add data rows
+      historyReportData.forEach(visit => {
+        const row = [
+          `"${visit.VisitID}"`,
+          `"${VisitorService.getVisitorFullName(visit.visitor)}"`,
+          `"${visit.visitor.Company || 'N/A'}"`,
+          `"${VisitorService.getHostFullName(visit.host)}"`,
+          `"${visit.Purpose}"`,
+          `"${formatDateTime(visit.CheckInTime)}"`,
+          `"${visit.CheckOutTime ? formatDateTime(visit.CheckOutTime) : 'N/A'}"`,
+          `"${visit.Status}"`
+        ];
+        csvContent += row.join(',') + '\n';
+      });
+      
+      // Create and trigger download
+      const blob = new Blob([csvContent], { 
+        type: 'text/csv;charset=utf-8;' 
+      });
+      
+      const timestamp = new Date().toISOString().split('T')[0];
+      const filename = `Visitor_History_Report_${timestamp}.csv`;
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      window.URL.revokeObjectURL(url);
+      
+      toast.success(`History report downloaded successfully!`);
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export history report. Please try again.');
     }
   };
 
@@ -260,7 +282,7 @@ const Reports: React.FC<ReportsProps> = ({ visitors, visits, hosts }) => {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Daily Visitor Log - {new Date(selectedDate).toLocaleDateString()}</CardTitle>
-              <Button onClick={() => exportReport('daily')} className="flex items-center gap-2">
+              <Button onClick={exportDailyReport} className="flex items-center gap-2">
                 <Download className="h-4 w-4" />
                 Export
               </Button>
@@ -336,7 +358,7 @@ const Reports: React.FC<ReportsProps> = ({ visitors, visits, hosts }) => {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle>Visitor History Report - {getHistoryReportFilter()}</CardTitle>
-              <Button onClick={() => exportReport('history')} className="flex items-center gap-2">
+              <Button onClick={exportHistoryReport} className="flex items-center gap-2">
                 <Download className="h-4 w-4" />
                 Export
               </Button>
