@@ -1,0 +1,109 @@
+// Models/Visitor.cs
+public class Visitor
+{
+    public int VisitorID { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string? Company { get; set; }
+    public string? ContactNumber { get; set; }
+    public string? Email { get; set; }
+    public DateTime CreatedDate { get; set; }
+}
+
+// Models/Host.cs
+public class Host
+{
+    public int HostID { get; set; }
+    public string FirstName { get; set; }
+    public string LastName { get; set; }
+    public string? Department { get; set; }
+    public string? ContactNumber { get; set; }
+}
+
+// Models/Visit.cs
+public class Visit
+{
+    public int VisitID { get; set; }
+    public int VisitorID { get; set; }
+    public int HostID { get; set; }
+    public string Purpose { get; set; }
+    public DateTime CheckInTime { get; set; }
+    public DateTime? CheckOutTime { get; set; }
+    public string Status { get; set; } // "Checked In" or "Checked Out"
+    
+    // Navigation properties
+    public virtual Visitor Visitor { get; set; }
+    public virtual Host Host { get; set; }
+}
+Database Schema (Entity Framework)
+You'll want to create these tables in your SQL Server database:
+
+
+CREATE TABLE Visitors (
+    VisitorID int IDENTITY(1,1) PRIMARY KEY,
+    FirstName nvarchar(100) NOT NULL,
+    LastName nvarchar(100) NOT NULL,
+    Company nvarchar(200),
+    ContactNumber nvarchar(20),
+    Email nvarchar(255),
+    CreatedDate datetime2 DEFAULT GETDATE()
+);
+
+CREATE TABLE Hosts (
+    HostID int IDENTITY(1,1) PRIMARY KEY,
+    FirstName nvarchar(100) NOT NULL,
+    LastName nvarchar(100) NOT NULL,
+    Department nvarchar(100),
+    ContactNumber nvarchar(20)
+);
+
+CREATE TABLE Visits (
+    VisitID int IDENTITY(1,1) PRIMARY KEY,
+    VisitorID int NOT NULL,
+    HostID int NOT NULL,
+    Purpose nvarchar(200) NOT NULL,
+    CheckInTime datetime2 DEFAULT GETDATE(),
+    CheckOutTime datetime2,
+    Status nvarchar(20) DEFAULT 'Checked In',
+    FOREIGN KEY (VisitorID) REFERENCES Visitors(VisitorID),
+    FOREIGN KEY (HostID) REFERENCES Hosts(HostID)
+);
+Steps to Create Your C# Backend
+Create a new ASP.NET Core Web API project:
+
+
+dotnet new webapi -n VisitorManagementAPI
+cd VisitorManagementAPI
+Install required NuGet packages:
+
+
+dotnet add package Microsoft.EntityFrameworkCore.SqlServer
+dotnet add package Microsoft.EntityFrameworkCore.Tools
+dotnet add package Microsoft.AspNetCore.Cors
+Create the DbContext:
+
+
+public class VisitorManagementContext : DbContext
+{
+    public DbSet<Visitor> Visitors { get; set; }
+    public DbSet<Host> Hosts { get; set; }
+    public DbSet<Visit> Visits { get; set; }
+    
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        optionsBuilder.UseSqlServer("your-connection-string");
+    }
+}
+Create Controllers for each entity (VisitorsController, HostsController, VisitsController, ReportsController)
+
+Configure CORS in Program.cs to allow your React app to connect:
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        policy => policy
+            .WithOrigins("http://localhost:5173") // Your React app URL
+            .AllowAnyHeader()
+            .AllowAnyMethod());
+});
