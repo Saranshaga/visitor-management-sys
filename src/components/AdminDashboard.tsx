@@ -116,8 +116,113 @@ const AdminDashboard: React.FC<AdminDashboardProps> = ({ visitors, visits, hosts
   const COLORS = ['#3B82F6', '#10B981', '#F59E0B', '#EF4444', '#8B5CF6'];
 
   const generateReport = (type: 'daily' | 'custom') => {
-    toast.success(`${type === 'daily' ? 'Daily' : 'Custom'} report generated successfully!`);
-    // In a real application, this would generate and download a PDF or CSV file
+    try {
+      const currentDate = new Date();
+      let reportData = [];
+      let filename = '';
+      let reportTitle = '';
+
+      if (type === 'daily') {
+        // Generate daily report
+        const today = currentDate.toDateString();
+        reportData = visits
+          .filter(visit => new Date(visit.CheckInTime).toDateString() === today)
+          .map(visit => {
+            const visitor = visitors.find(v => v.VisitorID === visit.VisitorID);
+            const host = hosts.find(h => h.HostID === visit.HostID);
+            return {
+              ...visit,
+              visitor: visitor!,
+              host: host!
+            };
+          });
+        
+        filename = `Daily_Report_${currentDate.toISOString().split('T')[0]}.csv`;
+        reportTitle = `Daily Report - ${currentDate.toLocaleDateString()}`;
+      } else {
+        // Generate custom report (all visits)
+        reportData = visits.map(visit => {
+          const visitor = visitors.find(v => v.VisitorID === visit.VisitorID);
+          const host = hosts.find(h => h.HostID === visit.HostID);
+          return {
+            ...visit,
+            visitor: visitor!,
+            host: host!
+          };
+        });
+        
+        filename = `Custom_Report_${currentDate.toISOString().split('T')[0]}.csv`;
+        reportTitle = `Custom Report - Generated on ${currentDate.toLocaleDateString()}`;
+      }
+
+      if (reportData.length === 0) {
+        toast.error(`No data available for ${type} report`);
+        return;
+      }
+
+      // Generate CSV content with UTF-8 BOM for Excel compatibility
+      let csvContent = '\uFEFF'; // UTF-8 BOM
+      
+      // Add header
+      csvContent += 'Visit ID,Visitor Name,Company,Host Name,Purpose,Check-in Time,Check-out Time,Status\n';
+      
+      // Add data rows
+      reportData.forEach(visit => {
+        const formatDateTime = (date: Date) => {
+          return new Date(date).toLocaleString('en-US', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false
+          });
+        };
+
+        const getVisitorFullName = (visitor: any) => {
+          return `${visitor.FirstName} ${visitor.LastName}`;
+        };
+
+        const getHostFullName = (host: any) => {
+          return `${host.FirstName} ${host.LastName}`;
+        };
+
+        const row = [
+          `"${visit.VisitID}"`,
+          `"${getVisitorFullName(visit.visitor)}"`,
+          `"${visit.visitor.Company || 'N/A'}"`,
+          `"${getHostFullName(visit.host)}"`,
+          `"${visit.Purpose}"`,
+          `"${formatDateTime(visit.CheckInTime)}"`,
+          `"${visit.CheckOutTime ? formatDateTime(visit.CheckOutTime) : 'N/A'}"`,
+          `"${visit.Status}"`
+        ];
+        csvContent += row.join(',') + '\n';
+      });
+      
+      // Create and trigger download
+      const blob = new Blob([csvContent], { 
+        type: 'text/csv;charset=utf-8;' 
+      });
+      
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      
+      link.setAttribute('href', url);
+      link.setAttribute('download', filename);
+      link.style.visibility = 'hidden';
+      
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      window.URL.revokeObjectURL(url);
+      
+      toast.success(`${type === 'daily' ? 'Daily' : 'Custom'} report downloaded successfully!`);
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error(`Failed to generate ${type} report. Please try again.`);
+    }
   };
 
   return (
