@@ -107,9 +107,61 @@ const Reports: React.FC<ReportsProps> = ({ visitors, visits, hosts }) => {
       ? `Daily Visitor Log - ${new Date(selectedDate).toLocaleDateString()}`
       : `Visitor History Report - ${getHistoryReportFilter()}`;
     
-    // In a real application, this would generate CSV/PDF
-    console.log(`Exporting ${reportTitle}:`, data);
-    toast.success(`${reportTitle} exported successfully!`);
+    // Generate CSV content
+    let csvContent = '';
+    
+    if (type === 'daily') {
+      csvContent = 'Visitor Name,Company,Host Name,Purpose,Check-in Time,Check-out Time,Duration (Hrs),Status\n';
+      data.forEach(visit => {
+        const row = [
+          VisitorService.getVisitorFullName(visit.visitor),
+          visit.visitor.Company || 'N/A',
+          VisitorService.getHostFullName(visit.host),
+          visit.Purpose,
+          formatDateTime(visit.CheckInTime),
+          visit.CheckOutTime ? formatDateTime(visit.CheckOutTime) : 'N/A',
+          formatDuration(visit.duration || 'N/A'),
+          visit.Status
+        ].map(field => `"${field}"`).join(',');
+        csvContent += row + '\n';
+      });
+    } else {
+      csvContent = 'Visit ID,Visitor Name,Company,Host Name,Purpose,Check-in Time,Check-out Time,Status\n';
+      data.forEach(visit => {
+        const row = [
+          visit.VisitID,
+          VisitorService.getVisitorFullName(visit.visitor),
+          visit.visitor.Company || 'N/A',
+          VisitorService.getHostFullName(visit.host),
+          visit.Purpose,
+          formatDateTime(visit.CheckInTime),
+          visit.CheckOutTime ? formatDateTime(visit.CheckOutTime) : 'N/A',
+          visit.Status
+        ].map(field => `"${field}"`).join(',');
+        csvContent += row + '\n';
+      });
+    }
+    
+    // Create and download the file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    
+    // Generate filename with timestamp
+    const timestamp = new Date().toISOString().split('T')[0];
+    const filename = type === 'daily' 
+      ? `Daily_Visitor_Report_${selectedDate}.csv`
+      : `Visitor_History_Report_${timestamp}.csv`;
+    
+    link.setAttribute('download', filename);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    toast.success(`${reportTitle} downloaded successfully!`);
   };
 
   const getHistoryReportFilter = () => {
