@@ -20,7 +20,7 @@ const Reports: React.FC<ReportsProps> = ({ visitors, visits, hosts }) => {
   const [reportType, setReportType] = useState<'daily' | 'history'>('daily');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
   const [dateFrom, setDateFrom] = useState('');
-  const [dateTo, setDateeTo] = useState('');
+  const [dateTo, setDateTo] = useState('');
   const [selectedVisitor, setSelectedVisitor] = useState('');
   const [selectedHost, setSelectedHost] = useState('');
 
@@ -239,7 +239,7 @@ const Reports: React.FC<ReportsProps> = ({ visitors, visits, hosts }) => {
 
   const clearFilters = () => {
     setDateFrom('');
-    setDateeTo('');
+    setDateTo('');
     setSelectedVisitor('');
     setSelectedHost('');
   };
@@ -382,7 +382,7 @@ const Reports: React.FC<ReportsProps> = ({ visitors, visits, hosts }) => {
                   id="dateTo"
                   type="date"
                   value={dateTo}
-                  onChange={(e) => setDateeTo(e.target.value)}
+                  onChange={(e) => setDateTo(e.target.value)}
                 />
               </div>
               <div>
