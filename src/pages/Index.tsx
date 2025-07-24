@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
-import { Search, UserPlus, Clock, Users, TrendingUp, UserCog, FileText } from 'lucide-react';
+import { Search, UserPlus, Clock, Users, TrendingUp, UserCog, FileText, FolderTree } from 'lucide-react';
 import { toast } from 'sonner';
 import VisitorForm from '@/components/VisitorForm';
 import VisitorTable from '@/components/VisitorTable';
@@ -13,6 +13,7 @@ import CheckInOut from '@/components/CheckInOut';
 import AdminDashboard from '@/components/AdminDashboard';
 import HostManagement from '@/components/HostManagement';
 import Reports from '@/components/Reports';
+import { ProjectStructure } from '@/components/ProjectStructure';
 import { VisitorService } from '@/services/VisitorService';
 import { Visitor, Visit, Host } from '@/types/vms';
 
@@ -20,7 +21,7 @@ const Index = () => {
   const [visitors, setVisitors] = useState<Visitor[]>([]);
   const [visits, setVisits] = useState<Visit[]>([]);
   const [hosts, setHosts] = useState<Host[]>([]);
-  const [activeTab, setActiveTab] = useState<'register' | 'checkin' | 'visitors' | 'hosts' | 'reports' | 'admin'>('register');
+  const [activeTab, setActiveTab] = useState<'register' | 'checkin' | 'visitors' | 'hosts' | 'reports' | 'admin' | 'structure'>('register');
 
   useEffect(() => {
     // Load initial data
@@ -869,6 +870,14 @@ This comprehensive documentation provides complete technical and business analys
             <TrendingUp className="h-4 w-4" />
             Admin Dashboard
           </Button>
+          <Button
+            variant={activeTab === 'structure' ? 'default' : 'outline'}
+            onClick={() => setActiveTab('structure')}
+            className="flex items-center gap-2"
+          >
+            <FolderTree className="h-4 w-4" />
+            Project Structure
+          </Button>
         </div>
 
         {/* Content Area */}
@@ -935,6 +944,12 @@ This comprehensive documentation provides complete technical and business analys
           {activeTab === 'admin' && (
             <div className="lg:col-span-3">
               <AdminDashboard visitors={visitors} visits={visits} hosts={hosts} />
+            </div>
+          )}
+          
+          {activeTab === 'structure' && (
+            <div className="lg:col-span-3">
+              <ProjectStructure />
             </div>
           )}
         </div>
