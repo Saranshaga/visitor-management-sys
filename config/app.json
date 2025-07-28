@@ -1,0 +1,153 @@
+{
+  "app": {
+    "name": "Visitor Management System",
+    "version": "1.0.0",
+    "description": "Modern visitor management and tracking system",
+    "author": "Saransh Agarwal",
+    "license": "MIT",
+    "homepage": "https://github.com/Saranshaga/visitor-management-system"
+  },
+  "features": {
+    "visitor_registration": {
+      "enabled": true,
+      "required_fields": ["firstName", "lastName", "purpose"],
+      "optional_fields": ["company", "contactNumber", "email"],
+      "validation": {
+        "email": true,
+        "phone": false,
+        "company": false
+      }
+    },
+    "check_in_out": {
+      "enabled": true,
+      "auto_checkout": {
+        "enabled": false,
+        "hours": 24
+      },
+      "notifications": {
+        "host_notification": true,
+        "email_alerts": false,
+        "sms_alerts": false
+      }
+    },
+    "host_management": {
+      "enabled": true,
+      "departments": [
+        "Engineering",
+        "Sales",
+        "Marketing",
+        "HR",
+        "Finance",
+        "Operations",
+        "Legal",
+        "IT",
+        "Customer Support"
+      ],
+      "auto_assign": false
+    },
+    "reports": {
+      "enabled": true,
+      "export_formats": ["csv", "pdf", "excel"],
+      "scheduled_reports": false,
+      "real_time_analytics": true
+    },
+    "admin_dashboard": {
+      "enabled": true,
+      "permissions": {
+        "view_all_visitors": true,
+        "manage_hosts": true,
+        "export_data": true,
+        "system_settings": true
+      }
+    }
+  },
+  "security": {
+    "authentication": {
+      "enabled": false,
+      "type": "jwt",
+      "expiry": "24h"
+    },
+    "data_protection": {
+      "encryption": true,
+      "anonymization": false,
+      "retention_days": 365
+    },
+    "access_control": {
+      "role_based": false,
+      "ip_whitelist": false,
+      "rate_limiting": true
+    }
+  },
+  "integrations": {
+    "email": {
+      "enabled": false,
+      "provider": "smtp",
+      "settings": {
+        "host": "smtp.gmail.com",
+        "port": 587,
+        "secure": false
+      }
+    },
+    "sms": {
+      "enabled": false,
+      "provider": "twilio"
+    },
+    "calendar": {
+      "enabled": false,
+      "provider": "google"
+    },
+    "id_scanner": {
+      "enabled": false,
+      "type": "barcode"
+    }
+  },
+  "ui": {
+    "theme": {
+      "default": "light",
+      "options": ["light", "dark", "auto"]
+    },
+    "branding": {
+      "logo": "/assets/logo.png",
+      "company_name": "Your Company Name",
+      "primary_color": "#3B82F6",
+      "secondary_color": "#10B981"
+    },
+    "layout": {
+      "sidebar": true,
+      "header": true,
+      "footer": false
+    }
+  },
+  "performance": {
+    "caching": {
+      "enabled": true,
+      "ttl": 3600
+    },
+    "pagination": {
+      "default_limit": 10,
+      "max_limit": 100
+    },
+    "search": {
+      "enabled": true,
+      "min_characters": 2,
+      "debounce_ms": 300
+    }
+  },
+  "monitoring": {
+    "analytics": {
+      "enabled": false,
+      "provider": "google_analytics",
+      "tracking_id": ""
+    },
+    "error_tracking": {
+      "enabled": false,
+      "provider": "sentry",
+      "dsn": ""
+    },
+    "performance": {
+      "enabled": false,
+      "provider": "new_relic",
+      "license_key": ""
+    }
+  }
+}

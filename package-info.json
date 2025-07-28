@@ -1,0 +1,159 @@
+{
+  "project": {
+    "name": "visitor-management-system",
+    "displayName": "Visitor Management System",
+    "version": "1.0.0",
+    "description": "A modern, comprehensive visitor management system built with React, TypeScript, and Tailwind CSS",
+    "keywords": [
+      "visitor-management",
+      "react",
+      "typescript",
+      "tailwindcss",
+      "vms",
+      "check-in",
+      "check-out",
+      "reporting",
+      "dashboard",
+      "host-management"
+    ],
+    "author": {
+      "name": "Saransh Agarwal",
+      "github": "Saranshaga",
+      "email": "your.email@example.com"
+    },
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Saranshaga/visitor-management-system.git"
+    },
+    "homepage": "https://github.com/Saranshaga/visitor-management-system#readme",
+    "license": "MIT"
+  },
+  "technical": {
+    "framework": "React 18.3.1",
+    "language": "TypeScript",
+    "bundler": "Vite",
+    "styling": "Tailwind CSS",
+    "ui_library": "Radix UI",
+    "form_handling": "React Hook Form + Zod",
+    "icons": "Lucide React",
+    "notifications": "Sonner",
+    "development": {
+      "node_version": ">=16.0.0",
+      "npm_version": ">=8.0.0",
+      "typescript_version": "latest",
+      "eslint": true,
+      "prettier": false
+    }
+  },
+  "features": {
+    "visitor_registration": {
+      "description": "Complete visitor information capture with form validation",
+      "components": ["VisitorForm", "VisitorRegistrationForm"],
+      "validation": "Zod schemas",
+      "required_fields": ["firstName", "lastName", "purpose"],
+      "optional_fields": ["company", "contactNumber", "email"]
+    },
+    "check_in_out": {
+      "description": "Real-time visitor check-in and check-out processing",
+      "components": ["CheckInOut", "CheckInOutSystem"],
+      "features": ["duration_calculation", "status_tracking", "real_time_updates"]
+    },
+    "visitor_management": {
+      "description": "View and manage all visitors with advanced filtering",
+      "components": ["VisitorTable", "AllVisitorsTable"],
+      "features": ["search", "filtering", "pagination", "export"]
+    },
+    "host_management": {
+      "description": "Manage host database with department organization",
+      "components": ["HostManagement", "HostManagementSystem"],
+      "features": ["crud_operations", "department_organization", "contact_management"]
+    },
+    "reporting": {
+      "description": "Generate detailed reports with export capabilities",
+      "components": ["Reports", "ReportsAndAnalytics"],
+      "export_formats": ["csv"],
+      "report_types": ["daily", "historical", "custom"]
+    },
+    "admin_dashboard": {
+      "description": "Analytics dashboard with visual insights",
+      "components": ["AdminDashboard", "AdminDashboardMain"],
+      "features": ["real_time_stats", "visual_charts", "performance_metrics"]
+    }
+  },
+  "architecture": {
+    "pattern": "Feature-based modular architecture",
+    "structure": {
+      "components": "Reusable UI components",
+      "features": "Feature-specific modules with components, services, models, types",
+      "shared": "Common utilities, hooks, services, types",
+      "database": "Data models and services",
+      "pages": "Page-level components"
+    },
+    "state_management": "React Hooks (useState, useEffect)",
+    "data_flow": "Props and event callbacks",
+    "type_safety": "TypeScript interfaces and types"
+  },
+  "data_models": {
+    "visitor": {
+      "fields": ["VisitorID", "FirstName", "LastName", "Company", "ContactNumber", "Email", "CreatedDate"],
+      "relationships": "One-to-Many with Visits"
+    },
+    "host": {
+      "fields": ["HostID", "FirstName", "LastName", "Department", "ContactNumber"],
+      "relationships": "One-to-Many with Visits"
+    },
+    "visit": {
+      "fields": ["VisitID", "VisitorID", "HostID", "Purpose", "CheckInTime", "CheckOutTime", "Status"],
+      "relationships": "Many-to-One with Visitor and Host"
+    }
+  },
+  "ui_components": {
+    "design_system": "Tailwind CSS with custom design tokens",
+    "component_library": "Radix UI primitives",
+    "styling_approach": "Utility-first CSS",
+    "responsive_design": "Mobile-first approach",
+    "accessibility": "WCAG compliant components"
+  },
+  "development_info": {
+    "created_date": "2024-01-20",
+    "development_time": "4-6 weeks",
+    "team_size": "1 developer",
+    "methodology": "Agile development",
+    "version_control": "Git with GitHub",
+    "deployment": "Multiple platform support (Vercel, Netlify, AWS, Firebase)"
+  },
+  "performance": {
+    "build_tool": "Vite for fast builds",
+    "code_splitting": "Dynamic imports",
+    "optimization": "Tree shaking, asset optimization",
+    "bundle_analysis": "Available via build commands"
+  },
+  "testing": {
+    "framework": "Ready for Vitest integration",
+    "types": ["unit", "integration", "e2e"],
+    "coverage": "Target 80%+",
+    "ci_cd": "GitHub Actions ready"
+  },
+  "deployment_targets": [
+    {
+      "platform": "Vercel",
+      "type": "Recommended",
+      "features": ["automatic_deployment", "github_integration", "ssl"]
+    },
+    {
+      "platform": "Netlify",
+      "type": "Alternative",
+      "features": ["drag_drop_deployment", "git_integration", "forms"]
+    },
+    {
+      "platform": "AWS S3 + CloudFront",
+      "type": "Enterprise",
+      "features": ["global_cdn", "custom_domain", "ssl"]
+    },
+    {
+      "platform": "Firebase Hosting",
+      "type": "Google Cloud",
+      "features": ["fast_hosting", "ssl", "analytics"]
+    }
+  ]
+}

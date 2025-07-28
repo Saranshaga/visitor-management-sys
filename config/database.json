@@ -1,0 +1,76 @@
+{
+  "development": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "visitor_management_dev",
+    "username": "postgres",
+    "password": "your_password",
+    "dialect": "postgres",
+    "logging": true,
+    "pool": {
+      "max": 10,
+      "min": 0,
+      "acquire": 30000,
+      "idle": 10000
+    }
+  },
+  "test": {
+    "host": "localhost",
+    "port": 5432,
+    "database": "visitor_management_test",
+    "username": "postgres",
+    "password": "your_password",
+    "dialect": "postgres",
+    "logging": false,
+    "pool": {
+      "max": 5,
+      "min": 0,
+      "acquire": 30000,
+      "idle": 10000
+    }
+  },
+  "staging": {
+    "host": "${DB_HOST}",
+    "port": "${DB_PORT}",
+    "database": "${DB_NAME}",
+    "username": "${DB_USERNAME}",
+    "password": "${DB_PASSWORD}",
+    "dialect": "postgres",
+    "logging": false,
+    "ssl": true,
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    },
+    "pool": {
+      "max": 20,
+      "min": 5,
+      "acquire": 60000,
+      "idle": 10000
+    }
+  },
+  "production": {
+    "host": "${DB_HOST}",
+    "port": "${DB_PORT}",
+    "database": "${DB_NAME}",
+    "username": "${DB_USERNAME}",
+    "password": "${DB_PASSWORD}",
+    "dialect": "postgres",
+    "logging": false,
+    "ssl": true,
+    "dialectOptions": {
+      "ssl": {
+        "require": true,
+        "rejectUnauthorized": false
+      }
+    },
+    "pool": {
+      "max": 50,
+      "min": 10,
+      "acquire": 60000,
+      "idle": 10000
+    }
+  }
+}

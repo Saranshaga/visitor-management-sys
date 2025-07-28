@@ -1,0 +1,199 @@
+{
+  "setup": {
+    "name": "Visitor Management System Setup",
+    "version": "1.0.0",
+    "description": "Setup configuration for VMS project initialization"
+  },
+  "commands": {
+    "install": {
+      "description": "Install all project dependencies",
+      "command": "npm install",
+      "priority": 1
+    },
+    "build": {
+      "description": "Build the project for production",
+      "command": "npm run build",
+      "priority": 2
+    },
+    "dev": {
+      "description": "Start development server",
+      "command": "npm run dev",
+      "priority": 3
+    },
+    "test": {
+      "description": "Run test suite",
+      "command": "npm run test",
+      "priority": 4
+    },
+    "lint": {
+      "description": "Run ESLint for code quality",
+      "command": "npm run lint",
+      "priority": 5
+    },
+    "format": {
+      "description": "Format code with Prettier",
+      "command": "npm run format",
+      "priority": 6
+    }
+  },
+  "environment_setup": {
+    "required_node_version": ">=16.0.0",
+    "required_npm_version": ">=8.0.0",
+    "environment_files": [
+      {
+        "file": ".env.local",
+        "description": "Local development environment variables",
+        "required": false
+      },
+      {
+        "file": ".env.production",
+        "description": "Production environment variables",
+        "required": true
+      }
+    ]
+  },
+  "database_setup": {
+    "type": "postgresql",
+    "required_version": ">=12.0",
+    "scripts": [
+      {
+        "name": "create_tables",
+        "file": "database/sql/01_create_tables.sql",
+        "description": "Create database tables and schema"
+      },
+      {
+        "name": "insert_sample_data",
+        "file": "database/sql/02_insert_sample_data.sql",
+        "description": "Insert sample data for development"
+      },
+      {
+        "name": "create_views_procedures",
+        "file": "database/sql/03_views_and_procedures.sql",
+        "description": "Create database views and stored procedures"
+      }
+    ]
+  },
+  "deployment_targets": [
+    {
+      "name": "vercel",
+      "description": "Deploy to Vercel platform",
+      "config_file": "vercel.json",
+      "build_command": "npm run build",
+      "output_directory": "dist"
+    },
+    {
+      "name": "netlify",
+      "description": "Deploy to Netlify platform",
+      "config_file": "netlify.toml",
+      "build_command": "npm run build",
+      "output_directory": "dist"
+    },
+    {
+      "name": "aws_s3",
+      "description": "Deploy to AWS S3 + CloudFront",
+      "config_file": "aws/deployment.json",
+      "build_command": "npm run build",
+      "output_directory": "dist"
+    },
+    {
+      "name": "docker",
+      "description": "Deploy using Docker containers",
+      "config_file": "Dockerfile",
+      "build_command": "docker build",
+      "output_directory": "container"
+    }
+  ],
+  "project_structure": {
+    "core_directories": [
+      "src/components",
+      "src/features",
+      "src/shared",
+      "src/database",
+      "src/models",
+      "src/services",
+      "src/types",
+      "src/pages",
+      "src/hooks"
+    ],
+    "config_directories": [
+      "config",
+      "docs",
+      "database/sql",
+      "scripts",
+      "public"
+    ],
+    "important_files": [
+      "README.md",
+      "CONTRIBUTING.md",
+      "LICENSE",
+      "CHANGELOG.md",
+      "package.json",
+      "tsconfig.json",
+      "vite.config.ts",
+      "tailwind.config.ts"
+    ]
+  },
+  "development_workflow": {
+    "git_hooks": {
+      "pre_commit": [
+        "npm run lint",
+        "npm run type-check"
+      ],
+      "pre_push": [
+        "npm run test",
+        "npm run build"
+      ]
+    },
+    "code_quality": {
+      "eslint": true,
+      "prettier": true,
+      "typescript": true,
+      "husky": false
+    },
+    "testing": {
+      "unit_tests": true,
+      "integration_tests": false,
+      "e2e_tests": false,
+      "coverage_threshold": 80
+    }
+  },
+  "feature_flags": {
+    "backend_integration": false,
+    "real_time_notifications": false,
+    "advanced_analytics": false,
+    "mobile_app": false,
+    "multi_tenancy": false,
+    "api_rate_limiting": false,
+    "data_encryption": false,
+    "audit_logging": false
+  },
+  "dependencies": {
+    "required_packages": [
+      "react",
+      "react-dom",
+      "typescript",
+      "vite",
+      "tailwindcss"
+    ],
+    "development_packages": [
+      "@types/react",
+      "@types/react-dom",
+      "@vitejs/plugin-react",
+      "eslint",
+      "postcss",
+      "autoprefixer"
+    ],
+    "optional_packages": [
+      "@testing-library/react",
+      "@testing-library/jest-dom",
+      "vitest",
+      "jsdom"
+    ]
+  },
+  "maintenance": {
+    "update_schedule": "monthly",
+    "security_patches": "immediately",
+    "dependency_updates": "quarterly",
+    "documentation_review": "quarterly"
+  }
+}
