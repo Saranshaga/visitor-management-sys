@@ -759,13 +759,6 @@ This comprehensive documentation provides complete technical and business analys
               <h1 className="text-4xl font-bold text-gray-900 mb-2">Visitor Management System</h1>
               <p className="text-gray-600">Streamline your visitor registration and tracking process</p>
             </div>
-            <Button 
-              onClick={downloadProjectReport}
-              className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700"
-            >
-              <FileText className="h-4 w-4" />
-              Download Project Report
-            </Button>
           </div>
         </div>
 
